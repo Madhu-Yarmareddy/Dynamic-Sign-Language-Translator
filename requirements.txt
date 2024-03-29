@@ -1,6 +1,6 @@
-numpy==1.24.3
-opencv-python==4.9.0.80
+numpy
+opencv-python
 mediapipe
 keras==2.14.0
-streamlit==1.31.0
+streamlit
 gtts
