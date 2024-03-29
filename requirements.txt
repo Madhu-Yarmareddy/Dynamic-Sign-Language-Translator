@@ -1,7 +1,6 @@
 streamlit>= 1.9.2
-numpy
+tensorflow==2.14.0
 opencv-python
 mediapipe
 keras
 gtts
-tensorflow
