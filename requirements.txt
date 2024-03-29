@@ -1,6 +1,6 @@
-streamlit>= 1.9.2
+streamlit>=1.31.0
 tensorflow==2.14.0
-opencv-python-headless
-mediapipe
-keras
-gtts
+opencv-python==4.9.0.80
+mediapipe==0.10.9
+keras==2.14.0
+gTTS==2.5.1
