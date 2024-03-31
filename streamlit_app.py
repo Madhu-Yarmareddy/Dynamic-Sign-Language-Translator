@@ -43,6 +43,37 @@ def play_video(video_path):
     cap.release()
     cv2.destroyAllWindows()
 
+def capture_and_save_video():
+    """Capture live video, save it as a .MOV file, and return the path."""
+    # os.makedirs(output_directory, exist_ok=True)
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    # Define the video capture object
+    cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera (you can change it based on your setup)
+    # Check if the camera opened successfully
+    if not cap.isOpened():
+        print("Error: Could not open camera.")
+        return
+    # Define the codec and create a VideoWriter object
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # 'mp4v' codec for MOV format
+    output_filename=os.path.join(curr_location, f"video_{timestamp}.MOV")
+    out = cv2.VideoWriter(output_filename, fourcc, 20.0, (640, 480))  # Adjust resolution if needed
+    print(f"Recording the video. Press 'q' to stop.")
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Failed to capture video.")
+            break
+        out.write(frame)
+        cv2.imshow("Live Video, Press 'q' to stop.", frame)
+        # Press 'q' to stop recording
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q'):
+            break
+    # Release resources
+    cap.release()
+    out.release()
+    cv2.destroyAllWindows()
+    return output_filename
 
 def preprocessVideo(path,nfsize=25,sz=150):
     mp_drawing=solutions.drawing_utils
@@ -162,8 +193,11 @@ with col1:
     selected_model = st.selectbox("Our Model:", list(model_path_dict.keys()))
     # selected_model = st.selectbox("Our Model:", model_names_list)
     # selected_model_path = os.path.join(curr_location, selected_model+".keras")
+    if st.button("Capture video"):
+        st.write('Record the video...')
+        video_path=capture_and_save_video()
     # Image upload function
-    uploaded_file = st.file_uploader("Input Video", type=["MOV", "MP4","mp4", "avi"])
+    uploaded_file = st.file_uploader("Select Video", type=["MOV", "MP4","mp4", "avi"])
 
 
 if uploaded_file is not None:
@@ -174,14 +208,13 @@ if uploaded_file is not None:
     # Save the uploaded file to the specified location
     with open(video_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
-    try:
-        [prediction,total_time]=our_prediction(video_path,model_path_dict[selected_model])
-        # ans=our_prediction(video_path,selected_model_path)
-        os.remove(video_path)
-    except:
-        os.remove(video_path)
-    # prediction=our_prediction(video_path,model_path_dict[selected_model])
-    # os.remove(video_path)
+    # try:
+    #     [prediction,total_time]=our_prediction(video_path,model_path_dict[selected_model])
+    #     # ans=our_prediction(video_path,selected_model_path)
+    #     os.remove(video_path)
+    # except:
+    #     os.remove(video_path)
+    [prediction,total_time]=our_prediction(video_path,model_path_dict[selected_model])
 
     with col2:
         with st.container(height=450,border=False):
@@ -189,6 +222,7 @@ if uploaded_file is not None:
             # Display the video player
             st.video(uploaded_file)
             st.write(f"<font color='black'>Overall Time taken to predict : {total_time-3:.4f}</font>",unsafe_allow_html=True)
+        os.remove(video_path)
     
     
     with col3:
