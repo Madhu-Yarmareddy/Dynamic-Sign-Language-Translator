@@ -193,12 +193,11 @@ with col1:
     selected_model = st.selectbox("Our Model:", list(model_path_dict.keys()))
     # selected_model = st.selectbox("Our Model:", model_names_list)
     # selected_model_path = os.path.join(curr_location, selected_model+".keras")
-    if st.button("Capture video"):
-        st.write('Record the video...')
-        video_path=capture_and_save_video()
     # Image upload function
     uploaded_file = st.file_uploader("Select Video", type=["MOV", "MP4","mp4", "avi"])
-
+    if st.button("Capture video"):
+        st.write('Record the video...'+'\n'+'Press "q" to stop recording.')
+        video_path=capture_and_save_video()
 
 if uploaded_file is not None:
     # Perform segmentation using the selected model
